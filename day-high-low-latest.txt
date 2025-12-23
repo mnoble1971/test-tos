@@ -1,0 +1,32 @@
+declare upper;
+
+input resetTime = 1600;  # 4:00pm ET
+
+# Reset only once when crossing 4:00pm
+def reset = SecondsFromTime(resetTime) == 0 and SecondsFromTime(resetTime)[1] != 0;
+
+def h = high;
+def l = low;
+
+def sessHigh = CompoundValue(
+    1,
+    if reset then h
+    else Max(sessHigh[1], h),
+    h
+);
+
+def sessLow = CompoundValue(
+    1,
+    if reset then l
+    else Min(sessLow[1], l),
+    l
+);
+
+plot Upper = sessHigh;
+plot Lower = sessLow;
+
+Upper.SetDefaultColor(Color.RED);
+Upper.SetLineWeight(2);
+
+Lower.SetDefaultColor(Color.GREEN);
+Lower.SetLineWeight(2);
