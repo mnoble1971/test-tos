@@ -40,8 +40,7 @@ plot HighLine = HighSinceY0930;
 plot LowLine  = LowSinceY0930;
 
 HighLine.SetDefaultColor(Color.RED);
-HighLine.SetLineWeight(2);
+HighLine.SetLineWeight(1);
 
 LowLine.SetDefaultColor(Color.GREEN);
-LowLine.SetLineWeight(2);
-
+LowLine.SetLineWeight(1);
