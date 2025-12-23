@@ -25,8 +25,8 @@ def sessLow = CompoundValue(
 plot Upper = sessHigh;
 plot Lower = sessLow;
 
-Upper.SetDefaultColor(Color.RED);
-Upper.SetLineWeight(2);
+Upper.SetDefaultColor(Color.GREEN);
+Upper.SetLineWeight(1);
 
 Lower.SetDefaultColor(Color.GREEN);
-Lower.SetLineWeight(2);
+Lower.SetLineWeight(1);
