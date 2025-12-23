@@ -1,32 +1,47 @@
 declare upper;
 
-input resetTime = 1600;  # 4:00pm ET
+input sessionStart = 0930;  # 9:30am ET
 
-# Reset only once when crossing 4:00pm
-def reset = SecondsFromTime(resetTime) == 0 and SecondsFromTime(resetTime)[1] != 0;
+# fires once at 9:30 each day
+def reset = SecondsFromTime(sessionStart) == 0 and SecondsFromTime(sessionStart)[1] != 0;
 
-def h = high;
-def l = low;
-
-def sessHigh = CompoundValue(
-    1,
-    if reset then h
-    else Max(sessHigh[1], h),
-    h
+# High/Low for the rolling 9:30->9:30 sessions
+def sessHigh = CompoundValue(1,
+    if reset then high else Max(sessHigh[1], high),
+    high
 );
 
-def sessLow = CompoundValue(
-    1,
-    if reset then l
-    else Min(sessLow[1], l),
-    l
+def sessLow = CompoundValue(1,
+    if reset then low else Min(sessLow[1], low),
+    low
 );
 
-plot Upper = sessHigh;
-plot Lower = sessLow;
+# Capture the COMPLETED session at today's 9:30 (that was yesterday 9:30 -> today 9:30)
+def baseHigh = CompoundValue(1,
+    if reset then sessHigh[1] else baseHigh[1],
+    sessHigh
+);
 
-Upper.SetDefaultColor(Color.GREEN);
-Upper.SetLineWeight(1);
+def baseLow = CompoundValue(1,
+    if reset then sessLow[1] else baseLow[1],
+    sessLow
+);
 
-Lower.SetDefaultColor(Color.GREEN);
-Lower.SetLineWeight(1);
+# Final: High/Low since yesterday 9:30 (carry forward and keep updating today)
+def HighSinceY0930 =
+    if SecondsFromTime(sessionStart) < 0 then sessHigh
+    else Max(baseHigh, sessHigh);
+
+def LowSinceY0930 =
+    if SecondsFromTime(sessionStart) < 0 then sessLow
+    else Min(baseLow, sessLow);
+
+plot HighLine = HighSinceY0930;
+plot LowLine  = LowSinceY0930;
+
+HighLine.SetDefaultColor(Color.RED);
+HighLine.SetLineWeight(2);
+
+LowLine.SetDefaultColor(Color.GREEN);
+LowLine.SetLineWeight(2);
+
