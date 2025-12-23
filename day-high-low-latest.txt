@@ -39,8 +39,8 @@ def LowSinceY0930 =
 plot HighLine = HighSinceY0930;
 plot LowLine  = LowSinceY0930;
 
-HighLine.SetDefaultColor(Color.RED);
+HighLine.SetDefaultColor(Color.GREEN);
 HighLine.SetLineWeight(1);
 
-LowLine.SetDefaultColor(Color.GREEN);
+LowLine.SetDefaultColor(Color.RED);
 LowLine.SetLineWeight(1);
