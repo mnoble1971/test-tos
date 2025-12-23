@@ -1,0 +1,42 @@
+declare upper;
+
+# --- Yesterday's levels ---
+def yHigh = high(period = AggregationPeriod.DAY)[1];
+def yLow  = low(period  = AggregationPeriod.DAY)[1];
+
+plot PrevDayHigh = yHigh;
+plot PrevDayLow  = yLow;
+
+PrevDayHigh.SetDefaultColor(Color.LIGHT_GRAY);
+PrevDayHigh.SetStyle(Curve.SHORT_DASH);
+PrevDayLow.SetDefaultColor(Color.LIGHT_GRAY);
+PrevDayLow.SetStyle(Curve.SHORT_DASH);
+
+# --- Detect day changes (intraday charts) ---
+def d = GetYYYYMMDD();
+def newDay = d <> d[1];
+
+# --- Track if we've already fired today ---
+rec hitHighToday = if newDay then 0
+                   else if hitHighToday[1] == 1 then 1
+                   else if high >= yHigh then 1
+                   else 0;
+
+rec hitLowToday  = if newDay then 0
+                   else if hitLowToday[1] == 1 then 1
+                   else if low <= yLow then 1
+                   else 0;
+
+# --- Fire only on the first bar that touches ---
+def firstTouchHigh = (high >= yHigh) and hitHighToday[1] == 0;
+def firstTouchLow  = (low  <= yLow)  and hitLowToday[1]  == 0;
+
+plot ArrowDown = if firstTouchHigh then yHigh else Double.NaN;
+ArrowDown.SetPaintingStrategy(PaintingStrategy.ARROWDOWN);
+ArrowDown.SetDefaultColor(Color.RED);
+ArrowDown.SetLineWeight(3);
+
+plot ArrowUp = if firstTouchLow then yLow else Double.NaN;
+ArrowUp.SetPaintingStrategy(PaintingStrategy.ARROWUP);
+ArrowUp.SetDefaultColor(Color.GREEN);
+ArrowUp.SetLineWeight(3);
