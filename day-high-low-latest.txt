@@ -1,3 +1,4 @@
+# start from 9:30 privous day and track the high/low
 declare upper;
 
 input sessionStart = 0930;  # 9:30am ET
