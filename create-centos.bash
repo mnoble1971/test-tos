@@ -100,6 +100,8 @@ write_files:
 # Install + enable qemu-guest-agent so virsh can query IP by default
 packages:
   - qemu-guest-agent
+  - git
+  - pip
 
 runcmd:
   - [ sh, -c, "restorecon -Rv /etc/ssh/sshd_config.d || true" ]
